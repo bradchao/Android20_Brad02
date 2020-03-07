@@ -29,6 +29,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignTop="@id/guess"
             android:layout_alignBottom="@id/guess"
+            android:inputType="numberDecimal"
             />
     </RelativeLayout>
 
@@ -80,6 +81,7 @@
         android:layout_below="@id/topLine"
         android:layout_above="@id/bottomLine"
         android:background="#ff0"
+        android:textSize="24sp"
         />
 
 </RelativeLayout>

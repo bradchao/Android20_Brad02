@@ -1,7 +1,9 @@
 package tw.org.iii.brad.brad02;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,6 +16,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView log;
     private Button guess;
     private String answer;
+    private AlertDialog alertDialog = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,17 +37,39 @@ public class MainActivity extends AppCompatActivity {
         initNewGame();
     }
 
+    private void showDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("WINNER");
+        builder.setMessage("ur winner");
+        builder.setCancelable(false);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                initNewGame();
+            }
+        });
+
+        alertDialog = builder.create();
+        alertDialog.show();
+    }
+
     private void guess(){
         String strInput = input.getText().toString();
         String result = checkAB(strInput);
         log.append(strInput + " => " + result + "\n");
         input.setText("");
+
+        if (result.equals("3A0B")){
+            showDialog();
+        }
+
     }
 
     private void initNewGame(){
         answer = createAnswer(3);
         input.setText("");
         log.setText("");
+        Log.v("brad", "answer = " + answer);
     }
 
     private String createAnswer(int d){

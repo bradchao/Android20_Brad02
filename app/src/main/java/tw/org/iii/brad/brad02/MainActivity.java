@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     private EditText input;
@@ -17,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
     private Button guess;
     private String answer;
     private AlertDialog alertDialog = null;
+    private int counter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,18 +36,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        initNewGame();
+        initNewGame(null);
     }
 
-    private void showDialog(){
+    private void showDialog(boolean isWinner, String mesg){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("WINNER");
-        builder.setMessage("ur winner");
+        builder.setTitle(isWinner?"WINNER":"Loser");
+        builder.setMessage(mesg);
         builder.setCancelable(false);
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                initNewGame();
+                initNewGame(null);
             }
         });
 
@@ -54,21 +56,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void guess(){
+        counter++;
         String strInput = input.getText().toString();
         String result = checkAB(strInput);
-        log.append(strInput + " => " + result + "\n");
+        log.append(counter + ". " +strInput + " => " + result + "\n");
         input.setText("");
 
-        if (result.equals("3A0B")){
-            showDialog();
+        if (result.equals(guessDig + "A0B")){
+            showDialog(true, "WINNER");
+        }else if (counter == 10){
+            showDialog(false, "the answer is " + answer);
         }
 
     }
 
-    private void initNewGame(){
-        answer = createAnswer(3);
+    public void initNewGame(View view){
+        answer = createAnswer(guessDig);
         input.setText("");
         log.setText("");
+        counter = 0;
         Log.v("brad", "answer = " + answer);
     }
 
@@ -139,4 +145,96 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         Log.v("brad", "onDestroy()");
     }
+
+    public void exit(View view) {
+        finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Log.v("brad", "onBackPress()");
+    }
+
+    private long lastTime = 0;
+
+    @Override
+    public void finish() {
+        //super.finish();
+        Log.v("brad", "finish()");
+
+        if (System.currentTimeMillis() - lastTime <= 3*1000){
+            super.finish();
+        }else{
+            Toast.makeText(this, "exit one more press",Toast.LENGTH_SHORT).show();
+        }
+        lastTime = System.currentTimeMillis();
+
+
+
+    }
+
+    public void setting(View view) {
+        showDialog3();
+    }
+
+    private void showDialog1(){
+        new AlertDialog.Builder(this)
+                .setTitle("Info")
+                .setMessage("Hello, World")
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .create()
+                .show();
+    }
+    private void showDialog2(){
+        String[] items = {"Item1","Item2","Item3","Item4"};
+        new AlertDialog.Builder(this)
+                .setTitle("Info")
+                .setCancelable(false)
+                .setItems(items, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.v("brad", "=> " + which);
+                    }
+                })
+                .create()
+                .show();
+    }
+
+    private int guessDig = 3;
+    private int tempDig;
+
+    private void showDialog3(){
+        String[] items = {"3","4","5","6"};
+        new AlertDialog.Builder(this)
+                .setTitle("猜幾碼?")
+                .setCancelable(false)
+                .setSingleChoiceItems(items, guessDig-3, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.v("brad", "==> " + which);
+                        tempDig = which+3;
+                    }
+                })
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.v("brad", "OK");
+                        guessDig = tempDig;
+                        initNewGame(null);
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .create()
+                .show();
+    }
+
+
 }

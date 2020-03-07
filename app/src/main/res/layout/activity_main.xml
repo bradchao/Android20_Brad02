@@ -44,16 +44,22 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:text="New"
+            android:onClick="initNewGame"
             />
         <Button
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:text="Setting"
+            android:onClick="setting"
             />
         <Button
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:text="Exit"
+            android:onClick="exit"
             />
     </LinearLayout>
 
